@@ -40,13 +40,18 @@ model Book {
 }
 
 model Review {
-  userId    Int
-  bookId    Int
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
+  content   String   @db.VarChar(20)
+  rating    Int      @default(0)
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull) // user가 삭제되어도 review는 남아있음
+  userId    Int?
   book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId    Int
 
-  @@id([userId, bookId, createdAt]) // 리뷰를 여러번 남길 수 있게 하기 위해 createdAt도 복합키에 포함
+  // @@id([userId, bookId, createdAt]) // 리뷰를 여러번 남길 수 있게 하기 위해 createdAt도 복합키에 포함
+  // SetNull로 설정할 경우 userId도 Optional로 설정해야 함
+  // 그러면 위의 복합키가 에러가 발생하게 되고, 복합키 대신 id를 사용해야 함
 }
 
 model Cart {

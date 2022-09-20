@@ -41,4 +41,31 @@ export class BookService {
       data,
     });
   }
+
+  async getBookReview(bookId: number) {
+    return await this.prisma.review.findMany({
+      where: {
+        bookId,
+      },
+      include: {
+        user: true,
+      },
+    });
+  }
+
+  async createBookReview(payload: any, bookId: number) {
+    return await this.prisma.review.create({
+      data: {
+        bookId,
+        userId: Number(payload.userId),
+        content: payload.content,
+        rating:
+          Number(payload.rating) > 5
+            ? 5
+            : Number(payload.rating) < 0
+            ? 0
+            : Number(payload.rating),
+      },
+    });
+  }
 }
