@@ -11,10 +11,69 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String?
+  id        Int       @id @default(autoincrement())
+  email     String    @unique @db.VarChar(40)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userInfo  UserInfo?
+  reviews   Review[]
+  carts     Cart[]
+  orders    Order[]
+}
+
+model UserInfo {
+  id       Int    @id @default(autoincrement())
+  password String @db.Text
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   Int    @unique // one to one
+}
+
+model Book {
+  id         Int         @id @default(autoincrement())
+  title      String      @db.VarChar(40)
+  publisher  String      @db.VarChar(20)
+  author     String      @db.VarChar(10)
+  price      Int         @default(0)
+  reviews    Review[]
+  carts      Cart[]
+  orderInfos OrderInfo[]
+}
+
+model Review {
+  userId    Int
+  bookId    Int
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull) // user가 삭제되어도 review는 남아있음
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@id([userId, bookId, createdAt]) // 리뷰를 여러번 남길 수 있게 하기 위해 createdAt도 복합키에 포함
+}
+
+model Cart {
+  userId Int
+  bookId Int
+  amount Int   @default(1)
+  user   User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book   Book? @relation(fields: [bookId], references: [id], onDelete: SetNull)
+
+  @@id([userId, bookId])
+}
+
+model Order {
+  id         Int         @id @default(autoincrement())
+  createdAt  DateTime    @default(now())
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+  orderInfos OrderInfo[]
+}
+
+model OrderInfo {
+  orderId Int
+  bookId  Int
+  price   Int   @default(0)
+  amount  Int   @default(0)
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  book    Book  @relation(fields: [bookId], references: [id], onDelete: SetNull)
+
+  @@id([orderId, bookId])
 }
