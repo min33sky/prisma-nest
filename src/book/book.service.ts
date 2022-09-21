@@ -1,10 +1,17 @@
 import { faker } from '@faker-js/faker';
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class BookService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {
+    prisma.$on<any>('query', (e: Prisma.QueryEvent) => {
+      console.log(e.query);
+      console.log(e.params);
+      console.log(e.duration);
+    });
+  }
 
   async getBooks(page = 1) {
     const limit = 10;
