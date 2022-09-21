@@ -1,11 +1,14 @@
 import { faker } from '@faker-js/faker';
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class BookService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private redis,
+  ) {
     prisma.$on<any>('query', (e: Prisma.QueryEvent) => {
       console.log(e.query);
       console.log(e.params);
@@ -96,14 +99,25 @@ export class BookService {
   }
 
   async searchBooks(keyword: string) {
-    return await this.prisma.book.findMany({
+    const cache = await this.redis.get(`GET /book/search?name=${keyword}`);
+
+    if (cache) {
+      console.log('cached data...');
+      return cache;
+    }
+
+    console.log('uncached data...');
+    const data = await this.prisma.book.findMany({
       where: {
         title: {
           // contains: keyword, //? 단순 prisma 검색 기능
-          search: `${keyword} | porro`, //? full-text-search 기능 (prisma preview feature 설정 필요)
+          search: `${keyword} & porro`, //? full-text-search 기능 (prisma preview feature 설정 필요)
         },
       },
     });
+
+    this.redis.set(`GET /book/search?name=${keyword}`, data, { ttl: 60 });
+    return data;
   }
 
   async getCategories() {
