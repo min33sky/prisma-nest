@@ -10,11 +10,12 @@ export class AppService {
   ) {}
 
   async getTesting() {
-    return await Promise.all([
-      this.userRepository.findUserById(1),
-      this.userRepository.getUsersWithPagination(),
-      this.bookRepository.findBookById(1),
-      this.bookRepository.getBooksWithPagination(),
-    ]);
+    // return await Promise.all([
+    //   this.userRepository.findUserById(1),
+    //   this.userRepository.getUsersWithPagination(),
+    //   this.bookRepository.findBookById(1),
+    //   this.bookRepository.getBooksWithPagination(),
+    // ]);
+    return await this.bookRepository.findBookById(80000);
   }
 }

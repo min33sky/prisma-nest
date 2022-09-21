@@ -52,4 +52,9 @@ export class BookController {
   createCategory(@Body('name') name) {
     return this.bookService.createCategory(name);
   }
+
+  @Post('change-author')
+  changeAuthor() {
+    return this.bookService.changeAuthor();
+  }
 }

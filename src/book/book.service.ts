@@ -124,4 +124,10 @@ export class BookService {
       },
     });
   }
+
+  async changeAuthor() {
+    //? 변경된 Raw의 수를 반환
+    return await this.prisma
+      .$executeRaw`UPDATE "Book" SET author = ${'changed'} WHERE author = ${'Andreanne3'}`;
+  }
 }
