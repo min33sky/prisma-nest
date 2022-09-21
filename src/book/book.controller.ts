@@ -32,4 +32,9 @@ export class BookController {
   createBookeReview(@Body() body, @Param('bookId') bookId: string) {
     return this.bookService.createBookReview(body, Number(bookId));
   }
+
+  @Get('search')
+  searchBooks(@Query('keyword') keyword: string) {
+    return this.bookService.searchBooks(keyword);
+  }
 }

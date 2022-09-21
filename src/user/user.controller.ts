@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   ParseIntPipe,
   Post,
   Query,
@@ -25,5 +26,15 @@ export class UserController {
   @Post()
   createUser(@Body() body) {
     return this.userService.createUser(body);
+  }
+
+  @Get('cart/:userId')
+  getMyCartList(@Param('userId', ParseIntPipe) userId: number) {
+    return this.userService.getMyCartList(userId);
+  }
+
+  @Post('cart')
+  addBookToMyCart(@Body() body) {
+    return this.userService.addBookToMyCart(body);
   }
 }

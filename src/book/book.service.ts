@@ -68,4 +68,15 @@ export class BookService {
       },
     });
   }
+
+  async searchBooks(keyword: string) {
+    return await this.prisma.book.findMany({
+      where: {
+        title: {
+          // contains: keyword, //? 단순 prisma 검색 기능
+          search: `${keyword} | porro`, //? full-text-search 기능 (prisma preview feature 설정 필요)
+        },
+      },
+    });
+  }
 }

@@ -72,4 +72,21 @@ export class UserService {
       },
     });
   }
+
+  async getMyCartList(userId: number) {
+    return this.prisma.cart.findMany({
+      where: {
+        userId,
+      },
+    });
+  }
+
+  async addBookToMyCart(body: any) {
+    return await this.prisma.cart.create({
+      data: {
+        userId: Number(body.userId),
+        bookId: Number(body.bookId),
+      },
+    });
+  }
 }
