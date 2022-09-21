@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { BookRepository } from './prisma/book.repository';
 import { UserRepository } from './prisma/user.repository';
 
@@ -7,7 +7,16 @@ export class AppService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly bookRepository: BookRepository,
+    @Inject(CACHE_MANAGER) private redis,
   ) {}
+
+  async getHello() {
+    return this.redis.get('hello');
+  }
+
+  async setHello() {
+    return this.redis.set('hello', 'world');
+  }
 
   async getTesting() {
     // return await Promise.all([
