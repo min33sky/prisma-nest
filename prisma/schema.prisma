@@ -29,6 +29,12 @@ model UserInfo {
   userId   Int    @unique // one to one
 }
 
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar(10)
+  books Book[]
+}
+
 model Book {
   id         Int         @id @default(autoincrement())
   title      String      @db.VarChar(40)
@@ -38,6 +44,8 @@ model Book {
   reviews    Review[]
   carts      Cart[]
   orderInfos OrderInfo[]
+  category   Category?   @relation(fields: [categoryId], references: [id]) //? 미리 만든 값때문에 nullish 사용함
+  categoryId Int? //? 미리 만든 값때문에 nullish 사용함
 }
 
 model Review {

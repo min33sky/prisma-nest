@@ -18,6 +18,11 @@ export class BookController {
     return this.bookService.getBooks(page);
   }
 
+  @Post()
+  createBook(@Body() body) {
+    return this.bookService.createBook(body);
+  }
+
   @Post('faker')
   createFakeBooks() {
     return this.bookService.createFakeBooks();
@@ -36,5 +41,15 @@ export class BookController {
   @Get('search')
   searchBooks(@Query('keyword') keyword: string) {
     return this.bookService.searchBooks(keyword);
+  }
+
+  @Get('category')
+  getCategories() {
+    return this.bookService.getCategories();
+  }
+
+  @Post('category')
+  createCategory(@Body('name') name) {
+    return this.bookService.createCategory(name);
   }
 }

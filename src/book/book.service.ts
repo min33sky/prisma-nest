@@ -27,6 +27,25 @@ export class BookService {
     };
   }
 
+  async createBook(body) {
+    return await this.prisma.book.create({
+      data: {
+        title: 'test',
+        publisher: 'test',
+        author: 'test',
+        price: 10000,
+        category: {
+          connect: {
+            id: 1,
+          },
+        },
+      },
+      include: {
+        category: true,
+      },
+    });
+  }
+
   async createFakeBooks() {
     const data = Array(10000)
       .fill(0)
@@ -75,6 +94,32 @@ export class BookService {
         title: {
           // contains: keyword, //? 단순 prisma 검색 기능
           search: `${keyword} | porro`, //? full-text-search 기능 (prisma preview feature 설정 필요)
+        },
+      },
+    });
+  }
+
+  async getCategories() {
+    return this.prisma.category.findMany({
+      include: {
+        books: true,
+      },
+    });
+  }
+
+  async createCategory(name: string) {
+    return await this.prisma.category.create({
+      data: {
+        name,
+        books: {
+          connect: [
+            {
+              id: 79999,
+            },
+            {
+              id: 80000,
+            },
+          ],
         },
       },
     });
