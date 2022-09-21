@@ -37,4 +37,14 @@ export class UserController {
   addBookToMyCart(@Body() body) {
     return this.userService.addBookToMyCart(body);
   }
+
+  @Get('order/:userId')
+  getOrderList(@Param('userId', ParseIntPipe) userId: number) {
+    return this.userService.getOrderList(userId);
+  }
+
+  @Post('order/:userId')
+  orderBook(@Body() body, @Param('userId', ParseIntPipe) userId: number) {
+    return this.userService.orderBook(body, userId);
+  }
 }

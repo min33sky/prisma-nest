@@ -89,4 +89,39 @@ export class UserService {
       },
     });
   }
+
+  async getOrderList(userId: number) {
+    return this.prisma.order.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        orderInfos: true,
+      },
+    });
+  }
+
+  async orderBook(body: any, userId: number) {
+    // 1. 결제 정보가 넘어오고
+    // 2. api 호출
+    // 3. 반환값
+    const { id: orderId } = await this.prisma.order.create({
+      data: {
+        userId,
+        paymentId: faker.datatype.uuid(),
+      },
+    });
+
+    const data = body.bookId.split(',').map((id) => ({
+      orderId,
+      bookId: Number(id),
+      amount: 1,
+    }));
+
+    const newOrderInfo = await this.prisma.orderInfo.createMany({
+      data,
+    });
+
+    return newOrderInfo;
+  }
 }
